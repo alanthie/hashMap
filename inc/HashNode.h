@@ -2,7 +2,7 @@
 #define HASH_NODE_H_
 
 #include <shared_mutex>
-namespace CTSL  //Concurrent Thread Safe Library
+namespace CTSL  // Concurrent Thread Safe Library
 {
     // Class representing a templatized hash node
     template <typename K, typename V>
@@ -22,15 +22,16 @@ namespace CTSL  //Concurrent Thread Safe Library
             void setValue(V value_) {value = value_;}
             const V& getValue() const {return value;}
 
-            HashNode *next; //Pointer to the next node in the same bucket
+            HashNode *next; // Pointer to the next node in the same bucket
+
         private:
-            K key;   //the hash key
-            V value; //the value corresponding to the key
+            K key;   // key
+            V value; // value
     };
 
 
-    //Class representing a hash bucket. The bucket is implemented as a singly linked list.
-    //A bucket is always constructed with a dummy head node
+    // Class representing a hash bucket. The bucket is implemented as a singly linked list.
+    // A bucket is always constructed with a dummy head node
     template <typename K, typename V>
     class HashBucket
     {
@@ -43,9 +44,6 @@ namespace CTSL  //Concurrent Thread Safe Library
                 clear();
             }   
 
-            //Function to find an entry in the bucket matching the key
-            //If key is found, the corresponding value is copied into the parameter "value" and function returns true.
-            //If key is not found, function returns false
             bool find(const K &key, V &value) const
             {
                 // A shared mutex is used to enable mutiple concurrent reads
@@ -64,11 +62,9 @@ namespace CTSL  //Concurrent Thread Safe Library
                 return false;
             }
 
-            //Function to insert into the bucket
-            //If key already exists, update the value, else insert a new node in the bucket with the <key, value> pair
             void insert(const K &key, const V &value)
             {
-                //Exclusive lock to enable single write in the bucket
+                // Exclusive lock to enable single write in the bucket
                 std::unique_lock<std::shared_timed_mutex> lock(mutex_);
                 HashNode<K, V> * prev = nullptr;
                 HashNode<K, V> * node = head;
@@ -79,7 +75,7 @@ namespace CTSL  //Concurrent Thread Safe Library
                     node = node->next;
                 }
 
-                if (nullptr == node) //New entry, create a node and add to bucket
+                if (nullptr == node) // New entry, create a node and add to bucket
                 {
                     if(nullptr == head)
                     {
@@ -92,15 +88,14 @@ namespace CTSL  //Concurrent Thread Safe Library
                 }
                 else
                 {
-                    node->setValue(value); //Key found in bucket, update the value
+                    node->setValue(value); // Key found in bucket, update the value
                 }
         
             }
 
-            //Function to remove an entry from the bucket, if found
             void erase(const K &key)
             {
-                //Exclusive lock to enable single write in the bucket
+                // Exclusive lock to enable single write in the bucket
                 std::unique_lock<std::shared_timed_mutex> lock(mutex_);
                 HashNode<K, V> *prev  = nullptr;
                 HashNode<K, V> * node = head;
@@ -111,11 +106,11 @@ namespace CTSL  //Concurrent Thread Safe Library
                     node = node->next;
                 }
 
-                if (nullptr == node) //Key not found, nothing to be done
+                if (nullptr == node) // Key not found, nothing to be done
                 {
                     return;
                 }
-                else  //Remove the node from the bucket
+                else  // Remove the node from the bucket
                 {
                     if(head == node)
                     {
@@ -125,14 +120,13 @@ namespace CTSL  //Concurrent Thread Safe Library
                     {
                         prev->next = node->next; 
                     }
-                    delete node; //Free up the memory
+                    delete node; // Free up the memory
                 }
             }
 
-            //Function to clear the bucket
             void clear()
             {
-                //Exclusive lock to enable single write in the bucket
+                // Exclusive lock to enable single write in the bucket
                 std::unique_lock<std::shared_timed_mutex> lock(mutex_);
                 HashNode<K, V> * prev = nullptr;
                 HashNode<K, V> * node = head;

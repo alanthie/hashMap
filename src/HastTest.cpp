@@ -139,7 +139,7 @@ void testSingleThreadIntegerKey()
 
 void testSingleThread()
 {
-    //Single threaded test with keys as std::string and integer
+    // Single threaded test with keys as std::string and integer
     testSingleThreadStringKey();
     testSingleThreadIntegerKey();   
 }
@@ -283,9 +283,9 @@ void testMultiThreadIntegerKey_Func2(CTSL::HashMap<int, int> &integerMap)
 
 int main()
 {
-    testSingleThread(); //Single threaded test  
+    testSingleThread(); // Single threaded test  
     
-    //Multi threaded test with two threads
+    // Multi threaded test with two threads
     CTSL::HashMap<int, int> integerMap;
     std::thread firstThread(testMultiThreadIntegerKey_Func1, ref(integerMap));
     std::thread secondThread(testMultiThreadIntegerKey_Func2, ref(integerMap));
