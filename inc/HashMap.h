@@ -60,7 +60,7 @@ namespace CTSL // Concurrent Thread Safe Library
             {
                 for(size_t i = 0; i < hashSize; i++)
                 {
-                    (hashTable[i]).clear();
+                    hashTable[i].clear();
                 }
             }   
 
